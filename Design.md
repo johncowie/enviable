@@ -2,6 +2,7 @@
 
 - DSL for parsing environment variables nested in data structure
   - env reader provides nice, coloured CLI output for user
+  - CLI output could be done in enviable.pretty
 - CLI tool for asking user for environment variables one by one if not supplied (maybe --cli flag)
   - Perhaps this could be on by default, and you can disable it with an environment variable  
 - Aero plugin/adapter

@@ -15,3 +15,17 @@
       )
     )
   )
+
+(deftest read-env
+  (testing "Can read vars from a map"
+    (let [env {"VAR_ONE" "Apple"
+               "VAR_TWO" "Banana"}]
+      (is (= {:one "Apple"
+              :two "Banana"
+              :three nil}
+             (sut/read-env env {:one (sut/var "VAR_ONE")
+                                :two (sut/var "VAR_TWO")
+                                :three (sut/var "VAR_THREE")})))
+      )
+    )
+  )
