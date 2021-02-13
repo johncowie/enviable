@@ -11,12 +11,13 @@
 
 ### Todo
 - [X] Create basic data type to represent an env variable
-- [ ] Can read config from flat data structure
+- [X] Can read config from flat data structure
 - [ ] Can read config from nested data structure
-- [ ] Can specify parser
+- [X] Can specify parser
+- [ ] Can collate errors
 - [ ] can specify default
 - [ ] can specify description
-- [ ] can specify optionality (implemented as nil default?)
+- [ ] can specify optional/mandatory vars (implemented as setting nil as default?)
 
 - [ ] Plan CLI work
 
