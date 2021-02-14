@@ -63,7 +63,7 @@
     (if-let [default (::default var)]
       (let [v (::default-value default)]
         (ok (read-result var nil v) v))
-      (ok (read-result var nil) nil))))
+      (error (read-result var nil)))))
 
 (declare -read-env)
 

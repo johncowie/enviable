@@ -10,8 +10,9 @@
              (sut/read-env env (sut/var "VAR_ONE"))))
       (is (= "Banana"
              (sut/read-env env (sut/var "VAR_TWO"))))
-      (is (= nil
-             (sut/read-env env (sut/var "VAR_THREE")))))))
+      (let [var (sut/var "VAR_THREE")]
+        (is (= (sut/error (sut/read-result var nil))
+               (sut/read-env env var)))))))
 
 (deftest default-to-test
   (testing "Can specify default value"
@@ -44,9 +45,12 @@
       (let [parse-int (fn [s] (Integer/parseInt s))
             var (-> (sut/var "A")
                     (sut/parse-with parse-int))]
-        (is (= 10 (sut/read-env {"A" "10"} var)))
-        (is (= (sut/error (sut/read-result var "bob")) (sut/read-env {"A" "bob"} var)))
-        (is (= nil (sut/read-env {} var)))))
+        (is (= 10
+               (sut/read-env {"A" "10"} var)))
+        (is (= (sut/error (sut/read-result var "bob"))
+               (sut/read-env {"A" "bob"} var)))
+        (is (= (sut/error (sut/read-result var nil))
+               (sut/read-env {} var)))))
 
     (testing "if parser returns nil, returns error"
       (let [parse-bool (fn [s] (case s "true" true
@@ -57,16 +61,19 @@
             ]
         (is (= true (sut/read-env {"A" "true"} var)))
         (is (= false (sut/read-env {"A" "false"} var)))
-        (is (= (sut/error (sut/read-result var "bob")) (sut/read-env {"A" "bob"} var)))
-        (is (= nil (sut/read-env {} var)))))))
+        (is (= (sut/error (sut/read-result var "bob"))
+               (sut/read-env {"A" "bob"} var)))
+        (is (= (sut/error (sut/read-result var nil))
+               (sut/read-env {} var)))))))
 
 (deftest read-env-test
   (testing "Can read vars from a map"
     (let [env {"VAR_ONE" "Apple"
-               "VAR_TWO" "Banana"}]
+               "VAR_TWO" "Banana"
+               "VAR_THREE" "Peach"}]
       (is (= {:one   "Apple"
               :two   "Banana"
-              :three nil}
+              :three "Peach"}
              (sut/read-env env {:one   (sut/var "VAR_ONE")
                                 :two   (sut/var "VAR_TWO")
                                 :three (sut/var "VAR_THREE")})))))
