@@ -1,13 +1,14 @@
 (ns enviable.core)
 
-(defn get-env []
-  (System/getenv))
-
 (defn with-parser [var parser]
   (assoc var ::parser parser))
 
 (defn error [var val]
   {::error [[var val]]})
+
+(defn ok [var val]
+  {::ok [[var val]]
+   ::value val})
 
 (defn error? [result]
   (boolean (::error result)))
@@ -27,38 +28,47 @@
     (let [parsed (parser s)]
       (if (nil? parsed)
         (error name s)
-        parsed))
+        (ok name parsed)))
     (catch Exception e
       (error name s))))
 
-(declare read-env)
+(declare -read-env)
+
+(defn nil-success [{::keys [name]}]
+  (ok name nil))
 
 (defn read-var [env x]
   (cond (env-var? x)
-        (some-> env
-                (lookup-var x)
-                (parse-var x))
+        (-> (some-> env
+                    (lookup-var x)
+                    (parse-var x))
+            (or (nil-success x)))
         (map? x)
-        (read-env env x)
+        (-read-env env x)
         :else
-        x))
+        {::value x}))
 
 (defn add-to-result [acc-result [k result]]
   (case [(error? acc-result) (error? result)]
-    [true true]
-    {::error (concat (::error acc-result) (::error result))}
-    [true false]
-    acc-result
-    [false true]
-    result
     [false false]
-    (assoc acc-result k result)))
+    (-> acc-result
+        (assoc-in [::value k] (::value result))
+        (update ::ok concat (::ok result)))
+    {::error (concat (::error acc-result) (::error result))
+     ::ok    (concat (::ok acc-result) (::ok result))}))
+
+(defn -read-env
+  [env var-map]
+  (->> var-map
+       (map (fn [[k v]]
+              [k (read-var env v)]))
+       (reduce add-to-result {})))
 
 (defn read-env
   ([var-map]
-   (read-env (get-env) var-map))
+    (read-env (System/getenv) var-map))
   ([env var-map]
-   (->> var-map
-        (map (fn [[k v]]
-               [k (read-var env v)]))
-        (reduce add-to-result {}))))
+   (let [res (-read-env env var-map)]
+     (if (error? res)
+       res
+       (::value res)))))
