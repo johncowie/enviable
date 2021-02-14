@@ -6,34 +6,59 @@
   (testing "Can read a var from an env"
     (let [env {"VAR_ONE" "Apple"
                "VAR_TWO" "Banana"}]
-      (is (= (sut/ok "VAR_ONE" "Apple")
-             (sut/read-var env (sut/var "VAR_ONE"))))
-      (is (= (sut/ok "VAR_TWO" "Banana")
-             (sut/read-var env (sut/var "VAR_TWO"))))
-      (is (= (sut/ok "VAR_THREE" nil)
-             (sut/read-var env (sut/var "VAR_THREE")))))))
+      (is (= "Apple"
+             (sut/read-env env (sut/var "VAR_ONE"))))
+      (is (= "Banana"
+             (sut/read-env env (sut/var "VAR_TWO"))))
+      (is (= nil
+             (sut/read-env env (sut/var "VAR_THREE")))))))
 
-(deftest with-parser-test
+(deftest default-to-test
+  (testing "Can specify default value"
+    (let [config (-> (sut/var "ONE")
+                     (sut/default-to "Hawk"))]
+      (is (= "Kite"
+             (sut/read-env {"ONE" "Kite"} config)))
+      (is (= "Hawk"
+             (sut/read-env {} config)))))
+  (testing "Can specify default for parsed value"
+    (let [config (-> (sut/var "NUMBER")
+                     (sut/parse-with #(Integer/parseInt %))
+                     (sut/default-to 10))]
+      (is (= 7
+             (sut/read-env {"NUMBER" "7"} config)))
+      (is (= 10
+             (sut/read-env {} config)))))
+
+  (testing "Can specify default value as nil"
+    (let [config (-> (sut/var "ONE")
+                     (sut/default-to nil))]
+      (is (= "Bob"
+             (sut/read-env {"ONE" "Bob"} config)))
+      (is (= nil
+             (sut/read-env {} config))))))
+
+(deftest parser-with-test
   (testing "can supply parser for var"
     (testing "if parser throws exception, returns error, otherwise parsed value"
       (let [parse-int (fn [s] (Integer/parseInt s))
             var (-> (sut/var "A")
-                    (sut/with-parser parse-int))]
-        (is (= (sut/ok "A" 10) (sut/read-var {"A" "10"} var)))
-        (is (= (sut/error "A" "bob") (sut/read-var {"A" "bob"} var)))
-        (is (= (sut/ok "A" nil) (sut/read-var {} var)))))
+                    (sut/parse-with parse-int))]
+        (is (= 10 (sut/read-env {"A" "10"} var)))
+        (is (= (sut/error (sut/read-result var "bob")) (sut/read-env {"A" "bob"} var)))
+        (is (= nil (sut/read-env {} var)))))
 
     (testing "if parser returns nil, returns error"
       (let [parse-bool (fn [s] (case s "true" true
                                        "false" false
                                        nil))
             var (-> (sut/var "A")
-                    (sut/with-parser parse-bool))
+                    (sut/parse-with parse-bool))
             ]
-        (is (= (sut/ok "A" true) (sut/read-var {"A" "true"} var)))
-        (is (= (sut/ok "A" false) (sut/read-var {"A" "false"} var)))
-        (is (= (sut/error "A" "bob") (sut/read-var {"A" "bob"} var)))
-        (is (= (sut/ok "A" nil) (sut/read-var {} var)))))))
+        (is (= true (sut/read-env {"A" "true"} var)))
+        (is (= false (sut/read-env {"A" "false"} var)))
+        (is (= (sut/error (sut/read-result var "bob")) (sut/read-env {"A" "bob"} var)))
+        (is (= nil (sut/read-env {} var)))))))
 
 (deftest read-env-test
   (testing "Can read vars from a map"
@@ -48,9 +73,9 @@
   (testing "Errors are collated"
     (let [parse-int (fn [s] (Integer/parseInt s))
           vars {:one (-> (sut/var "ONE")
-                         (sut/with-parser parse-int))
+                         (sut/parse-with parse-int))
                 :two (-> (sut/var "TWO")
-                         (sut/with-parser parse-int))}]
+                         (sut/parse-with parse-int))}]
       (is (= {:one 10
               :two 20}
              (sut/read-env {"ONE" "10"
@@ -71,11 +96,11 @@
           parse-veg #{"courgette" "pepper"}
 
           FRUIT_1 (-> (sut/var "FRUIT_1")
-                      (sut/with-parser parse-fruit))
+                      (sut/parse-with parse-fruit))
           FRUIT_2 (-> (sut/var "FRUIT_2")
-                      (sut/with-parser parse-fruit))
+                      (sut/parse-with parse-fruit))
           VEG_1 (-> (sut/var "VEG_1")
-                    (sut/with-parser parse-veg))
+                    (sut/parse-with parse-veg))
 
           config {:food {:fruit     {:one FRUIT_1
                                      :two FRUIT_2}
