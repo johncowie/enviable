@@ -6,6 +6,7 @@
 - CLI tool for asking user for environment variables one by one if not supplied (maybe --cli flag)
   - Perhaps this could be on by default, and you can disable it with an environment variable  
 - Aero plugin/adapter
+- Hook into component system - add 'configure' method to component protocol, so part of the components startup is configurating its self - then there could be a custom 'configure-system' function
   
 
 

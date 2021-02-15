@@ -26,9 +26,12 @@
 
 (defn read-result
   ([var input-val]
-   [(::name var) input-val])
+   (read-result var input-val nil))
   ([var input-val parsed-val]
-   [(::name var) parsed-val]))
+   {::name (::name var)
+    ::description (::description var)
+    ::input input-val
+    ::parsed parsed-val}))
 
 (defn error [read-result]
   {::error [read-result]})
@@ -98,9 +101,6 @@
      (if (error? res)
        res
        (::value res)))))
-
-
-
 
 ;; Useful Parsers
 
