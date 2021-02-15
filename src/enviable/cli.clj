@@ -17,6 +17,7 @@
 
 (def fg-grey (wrap-escape-code 1 30))
 (def fg-red (wrap-escape-code 31))
+(def fg-light-red (wrap-escape-code 0 31))
 (def fg-green (wrap-escape-code 32))
 (def fg-yellow (wrap-escape-code 33))
 
@@ -45,7 +46,7 @@
 ;                        (map escape-code (range 1 9))))))
 
 
-(defn determine-status [{:keys [error?]
+(defn determine-status [{:keys       [error?]
                          ::core/keys [input parsed]}]
   (case [error? (some? input) (some? parsed)]
     [true false false] :status/missing
@@ -56,40 +57,51 @@
   )
 
 (defn field
-  ([str]
-    (field identity str))
-  ([format str]
-   {::text   str
-    ::format format}))
+  ([s]
+   (field identity s))
+  ([format s]
+   {::text   (str s)
+    ::format format
+    ::type   ::cell}))
+
+(def separator
+  {::type ::separator
+   ::text ""})
 
 (defn var-name [result]
-  (if (= result ::header)
-
-    (field bold "Name")
+  (case result
+    ::header (field bold "Name")
+    ::separator separator
     (field (::core/name result))))
 
 (defn status [result]
-  (if (= result ::header)
-    (field bold "Status")
+  (case result
+    ::header (field bold "Status")
+    ::separator separator
     (case (determine-status result)
       :status/invalid (field fg-red "Invalid")
-      :status/missing (field fg-yellow "Missing")
+      :status/missing (field fg-yellow "Required")
       :status/default (field fg-grey "Default")
-      (field fg-green "Success"))))
+      (field fg-green "Loaded"))))
 
 (defn description [result]
-  (if (= result ::header)
-    (field bold "Description")
-    (field (::core/description result))))
+  (case result
+    ::header (field bold "Description")
+    ::separator separator
+    (if-let [description (::core/description result)]
+      (field description)
+      (field fg-grey "-"))))
 
 (defn received-input [result]
-  (if (= result ::header)
-    (field bold "Input")
+  (case result
+    ::header (field bold "Input")
+    ::separator separator
     (field (::core/input result))))
 
 (defn parsed-value [result]
-  (if (= result ::header)
-    (field bold "Parsed")
+  (case result
+    ::header (field bold "Value")
+    ::separator separator
     (field (::core/parsed result))))
 
 (defn flatten-results [{::core/keys [error ok] :as res}]
@@ -101,30 +113,37 @@
        (map (comp count ::text #(nth % n)))
        (reduce max 0)))
 
-(defn pad [s width]
-  (apply str s
-         (repeat (- width (count s)) " ")))
+(defn pad
+  ([s width]
+   (pad " " s width))
+  ([char s width]
+   (apply str s
+          (repeat (- width (count s)) char))))
+
+(defn bookend [end-str s]
+  (str end-str s end-str))
 
 (defn pad-columns [rows]
   (let [col-indices (range 0 (count (first rows)))
         max-widths (map (partial max-width rows) col-indices)]
     (for [row rows]
-      (for [i col-indices]
-        (let [s (::text (nth row i))
-              f (::format (nth row i))]
-          (f (pad s (nth max-widths i))))))))
-
-(defn add-separators [row]
-  (str "| " (str/join " | " row) " |"))
+      (->> (for [i col-indices]
+             (let [{::keys [type text format]} (nth row i)
+                   max-width (nth max-widths i)]
+               (if (= type ::separator)
+                 (str "-" (pad "-" "" max-width) "-")
+                 (str " " (format (pad text max-width)) " "))))
+           (str/join "|")
+           (bookend "|")))))
 
 (defn result-str [result]
-  (->> result
-       flatten-results
-       (concat [::header])
-       (map (juxt var-name status received-input parsed-value description))
-       pad-columns
-       (map add-separators)
-       (str/join "\n")))
+  (let [results (flatten-results result)
+        format (concat [::separator ::header ::separator] results [::separator])]
+    (->> format
+         (map (juxt var-name status received-input parsed-value description))
+         pad-columns
+         (str/join "\n")
+         (bookend "\n"))))
 
 (defn read-env [vars]
   (let [result (core/read-env vars)]

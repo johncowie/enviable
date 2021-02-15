@@ -8,8 +8,7 @@
                                         (env/describe "Age in years"))
                     :favourite-food (-> (env/var "FOOD")
                                         (env/default-to "Pizza")
-                                        (env/describe "My favourite food"))
-                    }})
+                                        (env/describe "My favourite food"))}})
 
 (defn -main [& args]
   (let [config (read-env vars)]
