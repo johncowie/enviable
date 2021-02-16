@@ -1,4 +1,4 @@
-(ns enviable.examples.example2
+(ns enviable.examples.component
   (:require [com.stuartsierra.component :as component]
             [enviable.component :as ec]
             [enviable.core :as env]))

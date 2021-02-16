@@ -7,7 +7,7 @@
   - Perhaps this could be on by default, and you can disable it with an environment variable  
 - Aero plugin/adapter
 - Hook into component system - add 'configure' method to component protocol, so part of the components startup is configurating its self - then there could be a custom 'configure-system' function
-  
+- Can load from a different source than just env vars
 
 
 ### Todo
@@ -16,10 +16,9 @@
 - [X] Can read config from nested data structure
 - [X] Can specify parser
 - [X] Can collate errors
-- [ ] can specify default
-- [ ] can specify description
+- [X] can specify default
+- [X] can specify description
 - [ ] can specify optional/mandatory vars (implemented as setting nil as default?)
 
 - [ ] Plan CLI work
-
 - [ ] Plan Aero work

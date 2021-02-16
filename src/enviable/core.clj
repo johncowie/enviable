@@ -17,6 +17,9 @@
 (defn default-to [var default]
   (assoc var ::default {::default-value default}))
 
+(defn is-optional [var]
+  (default-to var nil))
+
 (defn describe [var description]
   (assoc var ::description description))
 

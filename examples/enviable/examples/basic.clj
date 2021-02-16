@@ -1,4 +1,4 @@
-(ns enviable.examples.example1
+(ns enviable.examples.basic
   (:gen-class)
   (:require [enviable.cli :refer [read-env]]
             [enviable.core :as env]))
@@ -8,7 +8,11 @@
                                         (env/describe "Age in years"))
                     :favourite-food (-> (env/var "FOOD")
                                         (env/default-to "Pizza")
-                                        (env/describe "My favourite food"))}})
+                                        (env/describe "My favourite food"))
+                    :favourite-sport (-> (env/var "SPORT")
+                                         (env/is-optional)
+                                         (env/describe "My favourite sport"))
+                    }})
 
 (defn -main [& args]
   (let [config (read-env vars)]

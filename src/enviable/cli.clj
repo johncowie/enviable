@@ -52,6 +52,7 @@
     [true false false] :status/missing
     [true true false] :status/invalid
     [false false true] :status/default
+    [false false false] :status/optional
     :status/success
     )
   )
@@ -82,6 +83,7 @@
       :status/invalid (field fg-red "Invalid")
       :status/missing (field fg-yellow "Required")
       :status/default (field fg-grey "Default")
+      :status/optional (field fg-grey "Optional")
       (field fg-green "Loaded"))))
 
 (defn description [result]
