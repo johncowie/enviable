@@ -35,7 +35,9 @@ A user-friendly way of configuring Clojure apps with environment variables.
 
 ## Examples
 - `lein examples.basic`
-- `lein examples.component
+- `lein examples.component`
+
+## Contributing
 
 ### License
 
