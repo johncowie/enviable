@@ -1,12 +1,6 @@
 (ns enviable.component
   (:require [enviable.cli :as cli]))
 
-;;; Logic
-;;  Gather up config definitions for components
-;;  Load config
-;;  Pass config back to components
-
-
 (defprotocol Configurable
   (configuration [this]))
 
@@ -26,6 +20,9 @@
                 [k v])))
        (into {})))
 
-(defn configure-system [system]
-  (let [config (cli/read-env (collate-config system))]
-    (inject-config system config)))
+(defn configure-system
+  ([system]
+   (configure-system system (System/getenv)))
+  ([system env]
+   (let [config (cli/read-env env (collate-config system))]
+     (inject-config system config))))

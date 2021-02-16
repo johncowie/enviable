@@ -147,9 +147,12 @@
          (str/join "\n")
          (bookend "\n"))))
 
-(defn read-env [vars]
-  (let [result (core/read-env vars)]
-    (if (core/error? result)
-      (do (println (result-str result))
-          (System/exit 1))
-      result)))
+(defn read-env
+  ([vars]
+   (read-env (System/getenv) vars))
+  ([env vars]
+   (let [result (core/read-env env vars)]
+     (if (core/error? result)
+       (do (println (result-str result))
+           (System/exit 1))
+       result))))
