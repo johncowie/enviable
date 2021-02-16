@@ -2,11 +2,25 @@
 
 
 
+## Goals
+
+- An app should document the configuration it requires.
+- Useful, user-friendly feedback should be provided for missing configuration.
+- The app should only request the config it actually needs.
+- Configuration requirements should be composable.
+- Configuration should be describable with simple Clojure data.
+
 ## Usage
 
-FIXME
+## Examples
 
-## License
+### Reading Config
+
+### Configuring Components
+
+
+
+### License
 
 Copyright © 2021 FIXME
 
