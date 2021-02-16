@@ -87,13 +87,13 @@
               :two 20}
              (sut/read-env {"ONE" "10"
                             "TWO" "20"} vars)))
-      (is (= {::sut/error [["ONE" "bill"]
-                           ["TWO" "ben"]]
+      (is (= {::sut/error [(sut/read-result (:one vars) "bill")
+                           (sut/read-result (:two vars) "ben")]
               ::sut/ok    []}
              (sut/read-env {"ONE" "bill"
                             "TWO" "ben"} vars)))
-      (is (= {::sut/error [["ONE" "bill"]]
-              ::sut/ok    [["TWO" 6]]}
+      (is (= {::sut/error [(sut/read-result (:one vars) "bill")]
+              ::sut/ok    [(sut/read-result (:two vars) "6" 6)]}
              (sut/read-env {"ONE" "bill"
                             "TWO" "6"} vars))))))
 
@@ -121,16 +121,16 @@
                   "FRUIT_2" "orange"
                   "VEG_1"   "pepper"}
                  (sut/read-env config))))
-      (is (= {::sut/error [["FRUIT_1" "peanut"]]
-              ::sut/ok    [["FRUIT_2" "orange"]
-                           ["VEG_1" "pepper"]]}
+      (is (= {::sut/error [(sut/read-result FRUIT_1 "peanut")]
+              ::sut/ok    [(sut/read-result FRUIT_2 "orange" "orange")
+                           (sut/read-result VEG_1 "pepper" "pepper")]}
              (-> {"FRUIT_1" "peanut"
                   "FRUIT_2" "orange"
                   "VEG_1"   "pepper"}
                  (sut/read-env config))))
-      (is (= {::sut/error [["FRUIT_1" "peanut"]
-                           ["FRUIT_2" "almond"]
-                           ["VEG_1" "cashew"]]
+      (is (= {::sut/error [(sut/read-result FRUIT_1 "peanut")
+                           (sut/read-result FRUIT_2 "almond")
+                           (sut/read-result VEG_1 "cashew")]
               ::sut/ok []}
              (-> {"FRUIT_1" "peanut"
                   "FRUIT_2" "almond"
