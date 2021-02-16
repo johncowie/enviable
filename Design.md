@@ -8,6 +8,7 @@
 - Aero plugin/adapter
 - Hook into component system - add 'configure' method to component protocol, so part of the components startup is configurating its self - then there could be a custom 'configure-system' function
 - Can load from a different source than just env vars
+- Can obscure sensitive config vals
 
 
 ### Todo
@@ -21,4 +22,3 @@
 - [ ] can specify optional/mandatory vars (implemented as setting nil as default?)
 
 - [ ] Plan CLI work
-- [ ] Plan Aero work

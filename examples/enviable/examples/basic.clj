@@ -3,6 +3,7 @@
   (:require [enviable.cli :refer [read-env]]
             [enviable.core :as env]))
 
+;; TODO come up with better example
 (def vars {:person {:name           (env/var "NAME")
                     :age            (-> (env/int-var "AGE")
                                         (env/describe "Age in years"))
@@ -12,10 +13,13 @@
                     :favourite-sport (-> (env/var "SPORT")
                                          (env/is-optional)
                                          (env/describe "My favourite sport"))
+                    :employed?       (-> (env/bool-var "IS_EMPLOYED")
+                                         (env/describe "Am I employed?"))
+                    :weight          (-> (env/double-var "WEIGHT")
+                                         (env/describe "How much do I weight?"))
                     }})
 
 (defn -main [& args]
-  (let [config (read-env vars)]
-    (println config)))
+  (read-env vars))
 
 

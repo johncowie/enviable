@@ -1,5 +1,5 @@
 (ns enviable.cli
-  (:require [enviable.core :as core]
+  (:require [enviable.reader :as core]
             [clojure.string :as str]))
 
 (defn- escape-code
