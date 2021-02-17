@@ -13,31 +13,67 @@ A user-friendly way of configuring Clojure apps with environment variables.
 ## Usage
 
 ### Defining config
-- `var`
-- `read-env`
+
+```clojure
+(require '[enviable.core :as e])
+
+;; Let's start be defining a very simple config that tries to pull a value from an the environment variable MY_VAR
+(def config (e/var "MY_VAR"))
+
+;; When MY_VAR=foo is present in environment...
+(e/read-env config) ;; => "foo"
+
+;; When MY_VAR is not present in environment...
+(e/read-env config) ;; => An error map explaining that MY_VAR is missing
+
+;; You can verify if the return type is an error using the error? function i.e.
+(e/error? (e/read-env config))
+
+
+;; Just reading one environment variable is probably not going to be much use to you, so you can specify multiple at once!
+;; E.g. 
+(def config {:server {:host (e/var "HOST")
+                      :port (e/var "PORT")}
+             :db {:uri (e/var "DB_URI")}})
+             
+;; Given an environment with HOST=localhost PORT=1234 DB_URI=postgresql://localhost:5432/mydb
+(e/read-env config) ;; => {:server {:host "localhost" 
+                    ;;              :port "1234"} 
+                    ;;     :db {:uri "postgresql://localhost:5432/mydb"}}
+
+;; If any of the values are missing from the environment, then
+(e/read-env config) ;; => returns some error data indicating which variables are missing and present
+
+```
+
+TODO 
 - `parse-with`
 - `default-to`
 - `is-optional`
 - `describe`
-- `error?`
 
 ### Types
+TODO
 - `int-var`
 - `double-var`
 - `bool-var`
 
 ### CLI Output
+TODO
 - `cli/read-env`
 
 ### Configuring Components
+TODO
 - `Configurable / configuration`
 - `configure-system`
 
 ## Examples
+TODO
 - `lein examples.basic`
 - `lein examples.component`
 
 ## Contributing
+TODO
 
 ### License
 
