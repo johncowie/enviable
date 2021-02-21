@@ -1,6 +1,6 @@
 name: Enviable
 
-on: [push, pull_request]
+on: [push, pull_request, tags]
 
 jobs:
   build:
@@ -28,6 +28,8 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Run tests
       run: lein test
+    - name: Show Ref
+      run: echo "Github ref " ${{ github.ref }}
     - name: Deploy to Clojars
       if: github.ref == 'refs/heads/master'
       run: lein deploy releases
