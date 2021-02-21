@@ -10,7 +10,9 @@
   :profiles {:dev {:source-paths ["src" "examples" "dev" "test"]
                    :dependencies [[com.stuartsierra/component "1.0.0"]
                                   [leiningen "2.9.5"]]
-                   :aliases      {"example.basic"     ["run" "-m" "enviable.examples.basic"]
+                   :aliases      {"set-version"       ["run" "-m" "version/set-version"]
+                                  "next-snapshot"     ["run" "-m" "version/next-snapshot"]
+                                  "example.basic"     ["run" "-m" "enviable.examples.basic"]
                                   "example.component" ["run" "-m" "enviable.examples.component"]}}}
 
   :repositories {"releases" {:url           "https://repo.clojars.org"
