@@ -10,15 +10,15 @@
 - Can load from a different source than just env vars
 - Can obscure sensitive config vals
 
+### Releases
+- Setup github actions to run tests
+- Create clojars deployment key for github
+- Add deployment key to github secrets
+- Create script/function that: 
+  - when commit is tagged with release number that:
+    - bumps snapshot to release number in project.clj (https://cljdoc.org/d/leiningen/leiningen/2.9.4/api/leiningen.change)
+    - deploys to clojars
+    - bumps to next snapshot release
+  - when commit isn't tagged
+    - deploys to clojars with snapshot version
 
-### Todo
-- [X] Create basic data type to represent an env variable
-- [X] Can read config from flat data structure
-- [X] Can read config from nested data structure
-- [X] Can specify parser
-- [X] Can collate errors
-- [X] can specify default
-- [X] can specify description
-- [ ] can specify optional/mandatory vars (implemented as setting nil as default?)
-
-- [ ] Plan CLI work
