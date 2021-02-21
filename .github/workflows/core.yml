@@ -28,8 +28,6 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Run tests
       run: lein test
-    - name: Generate Credentials File
-      run: mkdir ~/.lein && ./gen-creds.sh $DEPLOY_USERNAME $DEPLOY_TOKEN > ~/.lein/credentials.clj
     - name: Deploy to Clojars
       if: github.ref == 'refs/heads/master'
-      run: lein deploy clojars
+      run: lein deploy releases

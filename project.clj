@@ -11,4 +11,9 @@
                    :dependencies [[com.stuartsierra/component "1.0.0"]]
                    :aliases      {"example.basic"     ["run" "-m" "enviable.examples.basic"]
                                   "example.component" ["run" "-m" "enviable.examples.component"]}}}
+
+  :repositories {"releases" {:url           "https://repo.clojars.org"
+                             :username      :env/deploy_username
+                             :password      :env/deploy_token
+                             :sign-releases false}}
   )
