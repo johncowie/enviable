@@ -35,6 +35,9 @@ jobs:
       run: lein test
     - name: Show Ref
       run: echo "Github ref " ${{ github.ref }}
+    - name: Print Version
+      if: startsWith(github.ref, 'refs/tags')
+      run: echo "Testing predicate"
     - name: Deploy to Clojars
       if: github.ref == 'refs/heads/master'
       run: lein deploy releases
