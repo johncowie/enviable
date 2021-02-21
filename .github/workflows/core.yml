@@ -9,7 +9,7 @@ jobs:
 
     env:
       DEPLOY_USERNAME: johncowie
-      DEPLOY_TOKEN: blah
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
 
     steps:
     - uses: actions/checkout@v2
@@ -33,6 +33,3 @@ jobs:
     - name: Deploy to Clojars
       if: github.ref == 'refs/heads/master'
       run: lein deploy clojars
-
-
-     #    '{#"https://repo.clojars.org" {:username "milgrim" :password "$ENV"}}'
