@@ -30,11 +30,9 @@ jobs:
       run: lein test
     - name: Generate Credentials File
       run: mkdir ~/.lein && ./gen-creds.sh $DEPLOY_USERNAME $DEPLOY_TOKEN > ~/.lein/credentials.clj
-    - name: Output Credentials
-      run: cat ~/.lein/credentials.clj
     - name: Deploy to Clojars
-      if: github.ref != 'refs/heads/master'
-      run: echo "Fake release"
+      if: github.ref == 'refs/heads/master'
+      run: lein deploy clojars
 
 
      #    '{#"https://repo.clojars.org" {:username "milgrim" :password "$ENV"}}'
