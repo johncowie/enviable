@@ -1,0 +1,1 @@
+echo "{#\"https://repo.clojars.org\" {:username \"$1\" :password \"$2\"}}"

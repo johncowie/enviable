@@ -7,6 +7,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      DEPLOY_USERNAME: johncowie
+      DEPLOY_TOKEN: blah
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-java@v1
@@ -24,3 +28,13 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Run tests
       run: lein test
+    - name: Generate Credentials File
+      run: ./gen-creds.sh $DEPLOY_USERNAME $DEPLOY_TOKEN > ~/.lein/credentials.clj
+    - name: Output Credentials
+      run: cat ~/.lein/credentials.clj
+    - name: Deploy to Clojars
+      if: github.ref != 'refs/heads/master'
+      run: echo "Fake release"
+
+
+     #    '{#"https://repo.clojars.org" {:username "milgrim" :password "$ENV"}}'
