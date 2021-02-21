@@ -7,8 +7,9 @@
   :repl-options {:init-ns enviable.core}
   :main nil
   :source-paths ["src"]
-  :profiles {:dev {:source-paths ["src" "examples" "test"]
-                   :dependencies [[com.stuartsierra/component "1.0.0"]]
+  :profiles {:dev {:source-paths ["src" "examples" "dev" "test"]
+                   :dependencies [[com.stuartsierra/component "1.0.0"]
+                                  [leiningen "2.9.5"]]
                    :aliases      {"example.basic"     ["run" "-m" "enviable.examples.basic"]
                                   "example.component" ["run" "-m" "enviable.examples.component"]}}}
 
