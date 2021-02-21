@@ -29,7 +29,7 @@ jobs:
     - name: Run tests
       run: lein test
     - name: Generate Credentials File
-      run: ./gen-creds.sh $DEPLOY_USERNAME $DEPLOY_TOKEN > ~/.lein/credentials.clj
+      run: mkdir ~/.lein && ./gen-creds.sh $DEPLOY_USERNAME $DEPLOY_TOKEN > ~/.lein/credentials.clj
     - name: Output Credentials
       run: cat ~/.lein/credentials.clj
     - name: Deploy to Clojars
