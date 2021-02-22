@@ -47,7 +47,8 @@ jobs:
       uses: EndBug/add-and-commit@v7
       with:
         author_name: CI
-        message: 'Update snapshot version to $(lein current-version)'
+        message: 'Bump snapshot version'
+        branch: 'master'
         push: false
         # git commit - see https://github.com/marketplace/actions/add-commit
 
