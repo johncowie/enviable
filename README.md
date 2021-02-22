@@ -1,6 +1,12 @@
 # enviable
 
+![example workflow](https://github.com/johncowie/enviable/actions/workflows/core.yml/badge.svg)
+
 A user-friendly way of configuring Clojure apps with environment variables.
+
+## Latest version
+
+[![Clojars Project](https://img.shields.io/clojars/v/johncowie/enviable.svg)](https://clojars.org/johncowie/enviable)
 
 ## Goals
 
