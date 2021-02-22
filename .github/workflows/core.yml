@@ -39,23 +39,15 @@ jobs:
       if: startsWith(github.ref, 'refs/tags')
       run: |
         echo "${GITHUB_REF#refs/*/}" | xargs lein set-version
-        cat project.clj
-        # lein deploy releases
+        lein deploy releases
         lein next-snapshot
-        cat project.clj
     - name: Update Snapshot version
-      uses: EndBug/add-and-commit@v7
+      uses: EndBug/add-and-commit@v7 # https://github.com/marketplace/actions/add-commit
       with:
         author_name: CI
         message: 'Bump snapshot version'
         branch: 'master'
-        push: false
-        # git commit - see https://github.com/marketplace/actions/add-commit
-
-      # TODO Echo tag to a file
-      # deploy
-      # call `lein set-snapshot` to upgrade snapshot version
-      # commit new snapshot version?
+        push: true
     - name: Deploy to Clojars
       if: github.ref == 'refs/heads/master'
       run: lein deploy releases
