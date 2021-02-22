@@ -39,20 +39,20 @@ jobs:
       if: startsWith(github.ref, 'refs/tags')
       run: |
         echo "${GITHUB_REF#refs/*/}" | xargs lein set-version
-        cat project.clj
+#        cat project.clj
         # lein deploy releases
         lein next-snapshot
-        cat project.clj
-        git config --local user.name "CI"
-        git config --local user.email "john.a.cowie@gmail.com"
-        git add project.clj
-        git commit -m "Update snapshot version to $(lein current-version)"
-#    - name: Update Snapshot version
-#      uses: EndBug/add-and-commit@v7
-#      with:
-#        author_name: CI
-#        message: 'Update snapshot version to $(lein current-version)'
-#        push: false
+#        cat project.clj
+#        git config --local user.name "CI"
+#        git config --local user.email "john.a.cowie@gmail.com"
+#        git add project.clj
+#        git commit -m "Update snapshot version to $(lein current-version)"
+    - name: Update Snapshot version
+      uses: EndBug/add-and-commit@v7
+      with:
+        author_name: CI
+        message: 'Bump snapshot version.'
+        push: false
         # git commit - see https://github.com/marketplace/actions/add-commit
 
       # TODO Echo tag to a file
