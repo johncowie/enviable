@@ -35,9 +35,23 @@ jobs:
       run: lein test
     - name: Show Ref
       run: echo "Github ref " ${{ github.ref }}
-    - name: Print Version
+    - name: Deploy Release
       if: startsWith(github.ref, 'refs/tags')
-      run: echo "${GITHUB_REF#refs/*/}"
+      run: |
+        echo "${GITHUB_REF#refs/*/}" | xargs lein set-version
+        cat project.clj
+        # lein deploy releases
+        lein set-snapshot
+        cat project.clj
+        # git commit - see https://github.com/marketplace/actions/add-commit
+
+
+      # TODO Echo tag to a file
+      # deploy
+      # call `lein set-snapshot` to upgrade snapshot version
+      # commit new snapshot version?
     - name: Deploy to Clojars
       if: github.ref == 'refs/heads/master'
       run: lein deploy releases
+
+
