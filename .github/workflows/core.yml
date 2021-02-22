@@ -41,7 +41,7 @@ jobs:
         echo "${GITHUB_REF#refs/*/}" | xargs lein set-version
         cat project.clj
         # lein deploy releases
-        lein set-snapshot
+        lein next-snapshot
         cat project.clj
         # git commit - see https://github.com/marketplace/actions/add-commit
 
