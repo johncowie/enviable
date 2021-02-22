@@ -12,6 +12,7 @@
                                   [leiningen "2.9.5"]]
                    :aliases      {"set-version"       ["run" "-m" "version/set-version"]
                                   "next-snapshot"     ["run" "-m" "version/next-snapshot"]
+                                  "current-version"   ["run" "-m" "version/current-version"]
                                   "example.basic"     ["run" "-m" "enviable.examples.basic"]
                                   "example.component" ["run" "-m" "enviable.examples.component"]}}}
 
