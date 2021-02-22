@@ -43,6 +43,8 @@ jobs:
         # lein deploy releases
         lein next-snapshot
         cat project.clj
+        git config --local user.name "CI"
+        git config --local user.email "john.a.cowie@gmail.com"
         git add project.clj
         git commit -m "Update snapshot version to $(lein current-version)"
 #    - name: Update Snapshot version
