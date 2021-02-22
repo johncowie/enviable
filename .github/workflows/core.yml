@@ -43,12 +43,14 @@ jobs:
         # lein deploy releases
         lein next-snapshot
         cat project.clj
-    - name: Update Snapshot version
-      uses: EndBug/add-and-commit@v7
-      with:
-        author_name: CI
-        message: 'Update snapshot version to $(lein current-version)'
-        push: false
+        git add project.clj
+        git commit -m "Update snapshot version to $(lein current-version)"
+#    - name: Update Snapshot version
+#      uses: EndBug/add-and-commit@v7
+#      with:
+#        author_name: CI
+#        message: 'Update snapshot version to $(lein current-version)'
+#        push: false
         # git commit - see https://github.com/marketplace/actions/add-commit
 
       # TODO Echo tag to a file
