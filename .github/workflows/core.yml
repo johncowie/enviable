@@ -40,7 +40,7 @@ jobs:
       run: |
         echo "${GITHUB_REF#refs/*/}" | xargs lein set-version
         cat project.clj
-#         lein deploy releases
+        # lein deploy releases
         lein next-snapshot
         cat project.clj
     - name: Update Snapshot version
