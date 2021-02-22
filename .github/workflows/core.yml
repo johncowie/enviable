@@ -43,13 +43,11 @@ jobs:
         # lein deploy releases
         lein next-snapshot
         cat project.clj
-        export CURRENT_VERSION=$(lein current-version)
-        echo "::set-env name=CURRENT_VERSION::$CURRENT_VERSION"
     - name: Update Snapshot version
       uses: EndBug/add-and-commit@v7
       with:
         author_name: CI
-        message: 'Update snapshot version to $CURRENT_VERSION'
+        message: 'Update snapshot version to $(lein current-version)'
         push: false
         # git commit - see https://github.com/marketplace/actions/add-commit
 
