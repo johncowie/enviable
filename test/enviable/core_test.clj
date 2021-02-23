@@ -8,37 +8,37 @@
     (let [env {"VAR_ONE" "Apple"
                "VAR_TWO" "Banana"}]
       (is (= "Apple"
-             (sut/read-env env (sut/var "VAR_ONE"))))
+             (sut/read-env (sut/var "VAR_ONE") env)))
       (is (= "Banana"
-             (sut/read-env env (sut/var "VAR_TWO"))))
+             (sut/read-env (sut/var "VAR_TWO") env)))
       (let [var (sut/var "VAR_THREE")]
         (is (= (reader/error (reader/read-result var nil))
-               (sut/read-env env var)))))))
+               (sut/read-env var env)))))))
 
 (deftest default-to-test
   (testing "Can specify default value"
     (let [config (-> (sut/var "ONE")
                      (sut/default-to "Hawk"))]
       (is (= "Kite"
-             (sut/read-env {"ONE" "Kite"} config)))
+             (sut/read-env config {"ONE" "Kite"})))
       (is (= "Hawk"
-             (sut/read-env {} config)))))
+             (sut/read-env config {})))))
   (testing "Can specify default for parsed value"
     (let [config (-> (sut/var "NUMBER")
                      (sut/parse-with #(Integer/parseInt %))
                      (sut/default-to 10))]
       (is (= 7
-             (sut/read-env {"NUMBER" "7"} config)))
+             (sut/read-env config {"NUMBER" "7"})))
       (is (= 10
-             (sut/read-env {} config)))))
+             (sut/read-env config {})))))
 
   (testing "Can specify default value as nil"
     (let [config (-> (sut/var "ONE")
                      (sut/default-to nil))]
       (is (= "Bob"
-             (sut/read-env {"ONE" "Bob"} config)))
+             (sut/read-env config {"ONE" "Bob"})))
       (is (= nil
-             (sut/read-env {} config))))))
+             (sut/read-env config {}))))))
 
 (deftest parser-with-test
   (testing "can supply parser for var"
@@ -47,11 +47,11 @@
             var (-> (sut/var "A")
                     (sut/parse-with parse-int))]
         (is (= 10
-               (sut/read-env {"A" "10"} var)))
+               (sut/read-env var {"A" "10"})))
         (is (= (reader/error (reader/read-result var "bob"))
-               (sut/read-env {"A" "bob"} var)))
+               (sut/read-env var {"A" "bob"})))
         (is (= (reader/error (reader/read-result var nil))
-               (sut/read-env {} var)))))
+               (sut/read-env var {})))))
 
     (testing "if parser returns nil, returns error"
       (let [parse-bool (fn [s] (case s "true" true
@@ -60,24 +60,24 @@
             var (-> (sut/var "A")
                     (sut/parse-with parse-bool))
             ]
-        (is (= true (sut/read-env {"A" "true"} var)))
-        (is (= false (sut/read-env {"A" "false"} var)))
+        (is (= true (sut/read-env var {"A" "true"})))
+        (is (= false (sut/read-env var {"A" "false"})))
         (is (= (reader/error (reader/read-result var "bob"))
-               (sut/read-env {"A" "bob"} var)))
+               (sut/read-env var {"A" "bob"})))
         (is (= (reader/error (reader/read-result var nil))
-               (sut/read-env {} var)))))))
+               (sut/read-env var {})))))))
 
 (deftest read-env-test
   (testing "Can read vars from a map"
-    (let [env {"VAR_ONE" "Apple"
-               "VAR_TWO" "Banana"
+    (let [env {"VAR_ONE"   "Apple"
+               "VAR_TWO"   "Banana"
                "VAR_THREE" "Peach"}]
       (is (= {:one   "Apple"
               :two   "Banana"
               :three "Peach"}
-             (sut/read-env env {:one   (sut/var "VAR_ONE")
-                                :two   (sut/var "VAR_TWO")
-                                :three (sut/var "VAR_THREE")})))))
+             (sut/read-env {:one   (sut/var "VAR_ONE")
+                            :two   (sut/var "VAR_TWO")
+                            :three (sut/var "VAR_THREE")} env)))))
   (testing "Errors are collated"
     (let [parse-int (fn [s] (Integer/parseInt s))
           vars {:one (-> (sut/var "ONE")
@@ -86,17 +86,17 @@
                          (sut/parse-with parse-int))}]
       (is (= {:one 10
               :two 20}
-             (sut/read-env {"ONE" "10"
-                            "TWO" "20"} vars)))
+             (sut/read-env vars {"ONE" "10"
+                                 "TWO" "20"})))
       (is (= {::reader/error [(reader/read-result (:one vars) "bill")
-                           (reader/read-result (:two vars) "ben")]
+                              (reader/read-result (:two vars) "ben")]
               ::reader/ok    []}
-             (sut/read-env {"ONE" "bill"
-                            "TWO" "ben"} vars)))
+             (sut/read-env vars {"ONE" "bill"
+                                 "TWO" "ben"})))
       (is (= {::reader/error [(reader/read-result (:one vars) "bill")]
               ::reader/ok    [(reader/read-result (:two vars) "6" 6)]}
-             (sut/read-env {"ONE" "bill"
-                            "TWO" "6"} vars))))))
+             (sut/read-env vars {"ONE" "bill"
+                                 "TWO" "6"}))))))
 
 (deftest read-env:nested-test
   (testing "Can specify vars in nested configuration, as well as other values"
@@ -118,22 +118,22 @@
                                  :two "orange"}
                      :veg       "pepper"
                      :condiment "ketchup"}}
-             (-> {"FRUIT_1" "banana"
-                  "FRUIT_2" "orange"
-                  "VEG_1"   "pepper"}
-                 (sut/read-env config))))
+             (->> {"FRUIT_1" "banana"
+                   "FRUIT_2" "orange"
+                   "VEG_1"   "pepper"}
+                  (sut/read-env config))))
       (is (= {::reader/error [(reader/read-result FRUIT_1 "peanut")]
               ::reader/ok    [(reader/read-result FRUIT_2 "orange" "orange")
-                           (reader/read-result VEG_1 "pepper" "pepper")]}
-             (-> {"FRUIT_1" "peanut"
-                  "FRUIT_2" "orange"
-                  "VEG_1"   "pepper"}
-                 (sut/read-env config))))
+                              (reader/read-result VEG_1 "pepper" "pepper")]}
+             (->> {"FRUIT_1" "peanut"
+                   "FRUIT_2" "orange"
+                   "VEG_1"   "pepper"}
+                  (sut/read-env config))))
       (is (= {::reader/error [(reader/read-result FRUIT_1 "peanut")
-                           (reader/read-result FRUIT_2 "almond")
-                           (reader/read-result VEG_1 "cashew")]
-              ::reader/ok []}
-             (-> {"FRUIT_1" "peanut"
-                  "FRUIT_2" "almond"
-                  "VEG_1"   "cashew"}
-                 (sut/read-env config)))))))
+                              (reader/read-result FRUIT_2 "almond")
+                              (reader/read-result VEG_1 "cashew")]
+              ::reader/ok    []}
+             (->> {"FRUIT_1" "peanut"
+                   "FRUIT_2" "almond"
+                   "VEG_1"   "cashew"}
+                  (sut/read-env config)))))))
