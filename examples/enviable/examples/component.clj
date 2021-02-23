@@ -1,6 +1,7 @@
 (ns enviable.examples.component
   (:require [com.stuartsierra.component :as component]
             [enviable.component :as ec]
+            [enviable.cli :as cli]
             [enviable.core :as env]))
 
 
@@ -27,7 +28,11 @@
     :db (map->DB {})
     :server (map->Server {})))
 
+(defn throw-errors [errors]
+  (throw (Exception. (str "\nError reading config:\n" (cli/result-str errors)))))
+
 (defn -main [& args]
   (-> system
       (ec/configure-system)
+      (env/lmap throw-errors)
       (component/start-system)))

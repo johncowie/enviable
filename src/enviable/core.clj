@@ -8,7 +8,18 @@
 (def is-optional reader/is-optional)
 (def describe reader/describe)
 
+(def error? reader/error?)
 (def read-env reader/read-env)
+
+(defn fmap [v-or-error f & args]
+  (if (error? v-or-error)
+    v-or-error
+    (apply f v-or-error args)))
+
+(defn lmap [v-or-error f & args]
+  (if (error? v-or-error)
+    (apply f v-or-error args)
+    v-or-error))
 
 
 ;; Useful Parsers TODO move to separate ns
@@ -34,4 +45,6 @@
 (def double-var (comp (wrap-parser parse-double) var))
 
 (def bool-var (comp (wrap-parser parse-bool) var))
+
+
 

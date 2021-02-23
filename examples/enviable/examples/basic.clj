@@ -1,6 +1,6 @@
 (ns enviable.examples.basic
   (:gen-class)
-  (:require [enviable.cli :refer [read-env]]
+  (:require [enviable.cli :refer [result-str]]
             [enviable.core :as env]))
 
 ;; TODO come up with better example
@@ -20,6 +20,9 @@
                     }})
 
 (defn -main [& args]
-  (read-env vars))
+  (let [r (env/read-env vars)]
+    (if (env/error? r)
+      (println (result-str r))
+      (println "LOADED CONFIG: " r))))
 
 

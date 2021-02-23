@@ -1,5 +1,5 @@
 (ns enviable.component
-  (:require [enviable.cli :as cli]))
+  (:require [enviable.core :as env]))
 
 (defprotocol Configurable
   (configuration [this]))
@@ -12,10 +12,10 @@
                 [k nil])))
        (into {})))
 
-(defn- inject-config [system config]
+(defn- inject-config [config system]
   (->> system
        (map (fn [[k v]]
-              (if(satisfies? Configurable v)
+              (if (satisfies? Configurable v)
                 [k (assoc v :config (get config k))]
                 [k v])))
        (into {})))
@@ -23,6 +23,8 @@
 (defn configure-system
   ([system]
    (configure-system system (System/getenv)))
-  ([system env]
-   (let [config (cli/read-env env (collate-config system))]
-     (inject-config system config))))
+  ([system opts]
+   (-> system
+       collate-config
+       (env/read-env opts)
+       (env/fmap inject-config system))))

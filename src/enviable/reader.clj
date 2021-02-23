@@ -87,8 +87,8 @@
 
 (defn read-env
   ([var-map]
-    (read-env (System/getenv) var-map))
-  ([env var-map]
+    (read-env var-map (System/getenv)))
+  ([var-map env]
    (let [res (-read-env env var-map)]
      (if (error? res)
        res
