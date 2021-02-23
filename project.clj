@@ -1,4 +1,4 @@
-(defproject johncowie/enviable "0.1.1-SNAPSHOT"
+(defproject johncowie/enviable "0.1.2-SNAPSHOT"
   :description "A user-friendly and composable way of configuring clojure apps"
   :url "https://github.com/johncowie/enviable"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
