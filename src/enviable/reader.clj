@@ -1,7 +1,23 @@
-(ns enviable.reader)
+(ns enviable.reader
+  (:require [clojure.string :as str]))
+
+(defn get-ns []
+  (try
+    (throw (Exception. "HEYY"))
+    (catch Exception e
+      (let [stack (->> e
+                       Throwable->map
+                       :trace
+                       (remove (comp #(str/starts-with? % "enviable.reader") first)))]
+        (-> stack
+            ffirst
+            str
+            (str/split #"\$")
+            first)))))
 
 (defn var [var-name]
   {::name   var-name
+   ::ns     (get-ns)
    ::parser identity})
 
 (defn env-var? [x]
@@ -23,16 +39,17 @@
   ([var input-val]
    (read-result var input-val nil))
   ([var input-val parsed-val]
-   {::name (::name var)
+   {::name        (::name var)
     ::description (::description var)
-    ::input input-val
-    ::parsed parsed-val}))
+    ::ns          (::ns var)
+    ::input       input-val
+    ::parsed      parsed-val}))
 
 (defn error [read-result]
   {::error [read-result]})
 
 (defn ok [read-result read-val]
-  {::ok [read-result]
+  {::ok    [read-result]
    ::value read-val})
 
 (defn error? [result]
@@ -87,7 +104,7 @@
 
 (defn read-env
   ([var-map]
-    (read-env var-map (System/getenv)))
+   (read-env var-map (System/getenv)))
   ([var-map env]
    (let [res (-read-env env var-map)]
      (if (error? res)

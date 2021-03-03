@@ -35,6 +35,9 @@
     (table/cell description)
     (table/cell "-" ascii/fg-grey)))
 
+(defn ns-cell [{::core/keys [ns]}]
+  (table/cell ns))
+
 (defn status-cell [result]
   (case (determine-status result)
     :status/invalid (table/cell "Invalid" ascii/fg-red)
@@ -49,6 +52,7 @@
               ["Status" status-cell]
               ["Input" input-cell]
               ["Value" value-cell]
+              ["Requested by" ns-cell]
               ["Description" description-cell]]]
     (->> (for [[header value-cell-fn] cols]
            (concat [(header-cell header)]

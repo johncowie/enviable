@@ -1,27 +1,11 @@
 (ns enviable.examples.component
   (:require [com.stuartsierra.component :as component]
             [enviable.component :as ec]
+            [enviable.examples.component.db :refer [map->DB]]
+            [enviable.examples.component.server :refer [map->Server]]
             [enviable.cli :as cli]
             [enviable.core :as env]))
 
-
-(defrecord DB [config]
-  component/Lifecycle
-  (start [this]
-    (println "Starting DB with config: " config))
-  (stop [this])
-  ec/Configurable
-  (configuration [this]
-    {:host (env/var "DB_HOST")}))
-
-(defrecord Server [config]
-  component/Lifecycle
-  (start [this]
-    (println "Starting server with config: " config))
-  (stop [this])
-  ec/Configurable
-  (configuration [this]
-    {:port (env/var "PORT")}))
 
 (def system
   (component/system-map
