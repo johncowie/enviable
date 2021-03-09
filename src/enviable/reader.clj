@@ -3,14 +3,16 @@
 
 (defn get-ns []
   (try
-    (throw (Exception. "HEYY"))
+    (throw (Exception. ""))
     (catch Exception e
       (let [stack (->> e
                        Throwable->map
                        :trace
-                       (remove (comp #(str/starts-with? % "enviable.reader") first)))]
+                       (map first)
+                       (remove #(str/starts-with? % "clojure."))
+                       (remove #(str/starts-with? % "enviable.reader")))]
         (-> stack
-            ffirst
+            first
             str
             (str/split #"\$")
             first)))))
