@@ -57,6 +57,16 @@
 (defn error? [result]
   (boolean (::error result)))
 
+(defn fmap [v-or-error f & args]
+  (if (error? v-or-error)
+    v-or-error
+    (apply f v-or-error args)))
+
+(defn lmap [v-or-error f & args]
+  (if (error? v-or-error)
+    (apply f v-or-error args)
+    v-or-error))
+
 (def success? (complement error?))
 
 (defn- lookup-var [env {::keys [name]}]

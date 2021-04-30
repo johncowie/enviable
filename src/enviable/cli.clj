@@ -59,13 +59,3 @@
                    (map value-cell-fn results)))
          (table/transpose)
          (table/render-table))))
-
-(defn read-env
-  ([vars]
-   (read-env (System/getenv) vars))
-  ([env vars]
-   (let [result (core/read-env env vars)]
-     (if (core/error? result)
-       (do (println (result-str result))
-           (System/exit 1))
-       result))))

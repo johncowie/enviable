@@ -1,6 +1,5 @@
 (ns enviable.examples.component.server
   (:require [com.stuartsierra.component :as component]
-            [enviable.component :as ec]
             [enviable.core :as env]))
 
 (defrecord Server [config]
@@ -8,6 +7,6 @@
   (start [this]
     (println "Starting server with config: " config))
   (stop [this])
-  ec/Configurable
-  (configuration [this]
+  env/Configurable
+  (env/configuration [this]
     {:port (env/var "PORT")}))

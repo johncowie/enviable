@@ -1,5 +1,6 @@
 (ns enviable.core
   (:require [enviable.reader :as reader]
+            [enviable.component :as component]
             [clojure.string :as str]))
 
 (def var reader/var)
@@ -11,16 +12,10 @@
 (def error? reader/error?)
 (def read-env reader/read-env)
 
-(defn fmap [v-or-error f & args]
-  (if (error? v-or-error)
-    v-or-error
-    (apply f v-or-error args)))
-
-(defn lmap [v-or-error f & args]
-  (if (error? v-or-error)
-    (apply f v-or-error args)
-    v-or-error))
-
+(def configure-system component/configure-system)
+(def Configurable component/Configurable)
+(def configuration component/configuration)
+(def with-configuration component/with-configuration)
 
 ;; Useful Parsers TODO move to separate ns
 
