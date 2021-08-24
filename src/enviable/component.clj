@@ -1,6 +1,8 @@
 (ns enviable.component
   (:require [enviable.reader :as reader]
-            [enviable.cli :as cli]))
+            [enviable.cli :as cli]
+            [com.stuartsierra.component :as component])
+  (:import (com.stuartsierra.component SystemMap)))
 
 (defprotocol Configurable
   (configuration [this]))
@@ -17,22 +19,30 @@
 (defn- collate-config [system]
   (->> system
        (map (fn [[k v]]
-              (if (satisfies? Configurable v)
+              (cond
+                (satisfies? Configurable v)
                 [k (configuration v)]
+                (instance? SystemMap v)
+                [k (collate-config v)]
+                :else
                 [k nil])))
-       (into {})))
+       flatten
+       (apply component/system-map)))
 
-(defn- inject-config [config system]
-  (->> system
+(defn- inject-config [config component]
+  (->> component
        (map (fn [[k v]]
               (cond
                 (::component-with-configuration v)
                 [k (assoc (::component-with-configuration v) :config (get config k))]
                 (satisfies? Configurable v)
                 [k (assoc v :config (get config k))]
+                (instance? SystemMap v)
+                [k (inject-config (get config k) v)]
                 :else
                 [k v])))
-       (into {})))
+       flatten
+       (apply component/system-map)))
 
 (defn configure-system
   ([system]
