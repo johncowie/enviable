@@ -51,4 +51,13 @@
                  (sut/configure-system environment)
                  component/start-system
                  system-to-map
-                 ))))))
+                 ))))
+    (testing "can drop in ad-hoc env vars into system"
+      (is (= {:a (map->Component {:config "val-a" :var-name "A" :started true})
+              :b "val-b"}
+             (-> (component/system-map
+                   :a (Component. "A")
+                   :b (env/var "B"))
+                 (sut/configure-system environment)
+                 component/start-system
+                 system-to-map))))))

@@ -22,6 +22,8 @@
               (cond
                 (satisfies? Configurable v)
                 [k (configuration v)]
+                (reader/env-var? v)
+                [k v]
                 (instance? SystemMap v)
                 [k (collate-config v)]
                 :else
@@ -37,6 +39,8 @@
                 [k (assoc (::component-with-configuration v) :config (get config k))]
                 (satisfies? Configurable v)
                 [k (assoc v :config (get config k))]
+                (reader/env-var? v)
+                [k (get config k)]
                 (instance? SystemMap v)
                 [k (inject-config (get config k) v)]
                 :else
