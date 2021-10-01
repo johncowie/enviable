@@ -25,7 +25,7 @@
   (table/cell name))
 
 (def sensitive-value-cell
-  (table/cell "(sensitive value hidden)"))
+  (table/cell "********"))
 
 (defn input-cell [{::core/keys [input sensitive]}]
   (if sensitive
