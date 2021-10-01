@@ -8,6 +8,7 @@
 (def default-to reader/default-to)
 (def is-optional reader/is-optional)
 (def describe reader/describe)
+(def is-sensitive reader/is-sensitive)
 
 (def error? reader/error?)
 (def read-env reader/read-env)

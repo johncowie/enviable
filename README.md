@@ -50,6 +50,10 @@ A user-friendly way of configuring Clojure apps with environment variables.
 ;; If any of the values are missing from the environment, then
 (e/read-env config) ;; => returns some error data indicating which variables are missing and present
 
+;; To prevent sensitive values (e.g passwords) being logged, mark the variable as sensitive
+(-> (e/var "MY_VAR")
+    (e/is-sensitive))
+
 ```
 
 TODO 

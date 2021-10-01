@@ -24,11 +24,19 @@
 (defn name-cell [{::core/keys [name]}]
   (table/cell name))
 
-(defn input-cell [{::core/keys [input]}]
-  (table/cell input))
+(def sensitive-value-cell
+  (table/cell "(sensitive value hidden)"))
 
-(defn value-cell [{::core/keys [parsed]}]
-  (table/cell parsed))
+(defn input-cell [{::core/keys [input sensitive]}]
+  (if sensitive
+    sensitive-value-cell
+    (table/cell input)))
+
+
+(defn value-cell [{::core/keys [parsed sensitive] :as val}]
+  (if sensitive
+    sensitive-value-cell
+    (table/cell parsed)))
 
 (defn description-cell [{::core/keys [description]}]
   (if description

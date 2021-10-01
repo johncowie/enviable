@@ -37,6 +37,9 @@
 (defn describe [var description]
   (assoc var ::description description))
 
+(defn is-sensitive [var]
+  (assoc var ::sensitive true))
+
 (defn read-result
   ([var input-val]
    (read-result var input-val nil))
@@ -45,7 +48,8 @@
     ::description (::description var)
     ::ns          (::ns var)
     ::input       input-val
-    ::parsed      parsed-val}))
+    ::parsed      parsed-val
+    ::sensitive   (::sensitive var)}))
 
 (defn error [read-result]
   {::error [read-result]})
