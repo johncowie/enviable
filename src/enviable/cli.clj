@@ -28,13 +28,12 @@
   (table/cell "********"))
 
 (defn input-cell [{::core/keys [input sensitive]}]
-  (if sensitive
+  (if (and input sensitive)
     sensitive-value-cell
     (table/cell input)))
 
-
 (defn value-cell [{::core/keys [parsed sensitive] :as val}]
-  (if sensitive
+  (if (and parsed sensitive)
     sensitive-value-cell
     (table/cell parsed)))
 

@@ -10,4 +10,6 @@
   (stop [this])
   ec/Configurable
   (configuration [this]
-    {:host (env/var "DB_HOST")}))
+    {:host     (env/var "DB_HOST")
+     :password (-> (env/var "DB_PASSWORD")
+                   (env/is-sensitive))}))
