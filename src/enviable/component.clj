@@ -24,7 +24,7 @@
                 [k (configuration v)]
                 (reader/env-var? v)
                 [k v]
-                (instance? SystemMap v)
+                (associative? v)
                 [k (collate-config v)]
                 :else
                 [k nil])))
@@ -41,7 +41,7 @@
                 [k (assoc v :config (get config k))]
                 (reader/env-var? v)
                 [k (get config k)]
-                (instance? SystemMap v)
+                (associative? v)
                 [k (inject-config (get config k) v)]
                 :else
                 [k v])))

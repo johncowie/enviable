@@ -7,7 +7,7 @@
 
 (defrecord Component [var-name]
   sut/Configurable
-  (configuration [this]
+  (configuration [_this]
     (env/var var-name))
   component/Lifecycle
   (start [this]
@@ -54,10 +54,12 @@
                  ))))
     (testing "can drop in ad-hoc env vars into system"
       (is (= {:a (map->Component {:config "val-a" :var-name "A" :started true})
-              :b "val-b"}
+              :b "val-b"
+              :c {:toggle "val-c"}}
              (-> (component/system-map
                    :a (Component. "A")
-                   :b (env/var "B"))
+                   :b (env/var "B")
+                   :c {:toggle (env/var "C")})
                  (sut/configure-system environment)
                  component/start-system
                  system-to-map))))))
