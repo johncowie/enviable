@@ -1,8 +1,6 @@
 (ns enviable.component
   (:require [enviable.reader :as reader]
-            [enviable.cli :as cli]
-            [com.stuartsierra.component :as component])
-  (:import (com.stuartsierra.component SystemMap)))
+            [enviable.cli :as cli]))
 
 (defprotocol Configurable
   (configuration [this]))
@@ -16,37 +14,37 @@
   (-> (WithConfiguration. config)
       (assoc ::component-with-configuration component)))
 
+(defn map-over-record-vals [f r]
+  (->> (keys r)
+       (reduce (fn [acc k]
+                 (let [v (get acc k)]
+                   (assoc acc k (f k v)))) r)))
+
 (defn- collate-config [system]
   (->> system
-       (map (fn [[k v]]
-              (cond
-                (satisfies? Configurable v)
-                [k (configuration v)]
-                (reader/env-var? v)
-                [k v]
-                (associative? v)
-                [k (collate-config v)]
-                :else
-                [k nil])))
-       flatten
-       (apply component/system-map)))
+       (map-over-record-vals (fn [_k v]
+                               (cond
+                                 (satisfies? Configurable v)
+                                 (configuration v)
+                                 (reader/env-var? v)
+                                 v
+                                 (associative? v)
+                                 (collate-config v))))))
 
 (defn- inject-config [config component]
   (->> component
-       (map (fn [[k v]]
-              (cond
-                (::component-with-configuration v)
-                [k (assoc (::component-with-configuration v) :config (get config k))]
-                (satisfies? Configurable v)
-                [k (assoc v :config (get config k))]
-                (reader/env-var? v)
-                [k (get config k)]
-                (associative? v)
-                [k (inject-config (get config k) v)]
-                :else
-                [k v])))
-       flatten
-       (apply component/system-map)))
+       (map-over-record-vals (fn [k v]
+                               (cond
+                                 (::component-with-configuration v)
+                                 (assoc (::component-with-configuration v) :config (get config k))
+                                 (satisfies? Configurable v)
+                                 (assoc v :config (get config k))
+                                 (reader/env-var? v)
+                                 (get config k)
+                                 (associative? v)
+                                 (inject-config (get config k) v)
+                                 :else
+                                 v)))))
 
 (defn configure-system
   ([system]
