@@ -3,7 +3,7 @@
 
 (defrecord EnvVar [env-var-name]
   ConfigSource
-  (label [this]
+  (label [_this]
     env-var-name)
   (read-config-value [_this env]
     (get env env-var-name)))
