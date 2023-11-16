@@ -1,6 +1,7 @@
 (ns enviable.reader
   (:require [clojure.string :as str]
-            [enviable.source :as source]))
+            [enviable.source :as source]
+            [enviable.source.env :refer [env-var]]))
 
 (defn get-ns []
   (try
@@ -19,7 +20,7 @@
             first)))))
 
 (defn var [var-name]
-  {::source (source/env-var var-name)
+  {::source (env-var var-name)
    ::ns     (get-ns)
    ::parser identity})
 
