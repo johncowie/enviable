@@ -16,7 +16,7 @@
                     :employed?       (-> (env/bool-var "IS_EMPLOYED")
                                          (env/describe "Am I employed?"))
                     :weight          (-> (env/double-var "WEIGHT")
-                                         (env/describe "How much do I weight?"))
+                                         (env/describe "How much do I weigh?"))
                     }})
 
 (defn -main [& args]

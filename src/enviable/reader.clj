@@ -1,5 +1,6 @@
 (ns enviable.reader
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [enviable.source :as source]))
 
 (defn get-ns []
   (try
@@ -18,12 +19,17 @@
             first)))))
 
 (defn var [var-name]
-  {::name   var-name
+  {::source (source/env-var var-name)
    ::ns     (get-ns)
    ::parser identity})
 
+(defn config-val [source]
+  {::source source
+   ::ns (get-ns)
+   ::parser identity})
+
 (defn env-var? [x]
-  (::name x))
+  (-> x ::source source/config-source?))
 
 (defn parse-with [var parser]
   (assoc var ::parser parser))
@@ -44,7 +50,7 @@
   ([var input-val]
    (read-result var input-val nil))
   ([var input-val parsed-val]
-   {::name        (::name var)
+   {::name        (-> var ::source source/label)
     ::description (::description var)
     ::ns          (::ns var)
     ::input       input-val
@@ -73,8 +79,8 @@
 
 (def success? (complement error?))
 
-(defn- lookup-var [env {::keys [name]}]
-  (get env name))
+(defn- lookup-var [env var]
+  (-> var ::source (source/read-config-value env)))
 
 (defn- parse-var [s {::keys [parser] :as var}]
   (try
@@ -93,8 +99,6 @@
         (ok (read-result var nil v) v))
       (error (read-result var nil)))))
 
-(declare -read-env)
-
 (defn- add-to-result [acc-result [k result]]
   (if (and (success? acc-result) (success? result))
     (-> acc-result
@@ -102,6 +106,8 @@
         (update ::ok concat (::ok result)))
     {::error (concat (::error acc-result) (::error result))
      ::ok    (concat (::ok acc-result) (::ok result))}))
+
+(declare -read-env)
 
 (defn- read-env-map
   [env var-map]
