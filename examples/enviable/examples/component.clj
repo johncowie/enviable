@@ -12,12 +12,7 @@
                     (env/with-configuration {:host (env/var "ANOTHER_DB_HOST")}))
     :server (map->Server {})))
 
-(defn debug [v]
-  (println v)
-  v)
-
-(defn -main [& args]
+(defn -main [& _args]
   (-> system
       (env/configure-system)
-      debug
       (component/start-system)))

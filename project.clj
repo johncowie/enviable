@@ -14,7 +14,8 @@
                                   "next-snapshot"     ["run" "-m" "version/next-snapshot"]
                                   "current-version"   ["run" "-m" "version/current-version"]
                                   "example.basic"     ["run" "-m" "enviable.examples.basic"]
-                                  "example.component" ["run" "-m" "enviable.examples.component"]}}}
+                                  "example.component" ["run" "-m" "enviable.examples.component"]
+                                  "example.other-sources" ["run" "-m" "enviable.examples.other-sources"]}}}
 
   :repositories {"releases" {:url           "https://repo.clojars.org"
                              :username      :env/deploy_username

@@ -18,5 +18,4 @@
 (def fg-light-red (wrap-escape-code 0 31))
 (def fg-green (wrap-escape-code 32))
 (def fg-yellow (wrap-escape-code 33))
-
 (def bold (wrap-escape-code 1))
