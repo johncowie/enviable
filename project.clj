@@ -9,7 +9,10 @@
   :source-paths ["src"]
   :profiles {:dev {:source-paths ["src" "examples" "dev" "test"]
                    :dependencies [[com.stuartsierra/component "1.0.0"]
+                                  [pjstadig/humane-test-output "0.11.0"]
                                   [leiningen "2.9.5"]]
+                   :injections   [(require 'pjstadig.humane-test-output)
+                                  (pjstadig.humane-test-output/activate!)]
                    :aliases      {"set-version"       ["run" "-m" "version/set-version"]
                                   "next-snapshot"     ["run" "-m" "version/next-snapshot"]
                                   "current-version"   ["run" "-m" "version/current-version"]

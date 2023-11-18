@@ -13,6 +13,9 @@
     :server (map->Server {})))
 
 (defn -main [& _args]
-  (-> system
-      (env/configure-system)
-      (component/start-system)))
+  (try
+    (-> system
+        (env/configure-system)
+        (component/start-system))
+    (catch Exception e
+      (println (.getMessage e)))))
