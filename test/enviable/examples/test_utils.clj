@@ -14,15 +14,15 @@
        (remove str/blank?)
        (map str/trim)))
 
-(defn get-output [example-command]
-  (->> (sh "lein" example-command)
+(defn get-output [& example-commands]
+  (->> (apply sh "lein" example-commands)
        :out
        clean-output-for-comparison
        (str/join "\n")))
-(defn regression-test [expected-cli-output example-command]
+(defn regression-test [expected-cli-output & example-commands]
   (testing "regression test of output"
     (is (= (-> expected-cli-output
                clean-output-for-comparison)
-           (-> (sh "lein" example-command)
+           (-> (apply sh "lein" example-commands)
                :out
                clean-output-for-comparison)))))
