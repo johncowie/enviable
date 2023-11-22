@@ -4,7 +4,7 @@
 
 
 (def expected-output
-  "
+  "Error reading config:
  | Name        | Status    | Input | Value | Requested by | Description          |
  | ----------- | --------- | ----- | ----- | ------------ | -------------------- |
  | NAME        | Required  |       |       | user         | -                    |

@@ -1,5 +1,7 @@
-(ns enviable.output.markdown
+(ns enviable.reporter.markdown
+
   (:require [enviable.reader :as core]
+            [enviable.reporter :as reporter]
             [enviable.util.markdown-table :as table]
             [enviable.util.ansi :as ascii]))
 
@@ -87,3 +89,12 @@
                    (map value-cell-fn results)))
          (table/transpose)
          (table/render-table))))
+
+(defrecord MarkdownReporter []
+  reporter/ConfigReporter
+  (report-config-status [_this result]
+    (str "Error reading config:\n" (result-str result)))
+  (document-config [_this result]
+    (doc-str result)))
+
+(def markdown-reporter (MarkdownReporter.))

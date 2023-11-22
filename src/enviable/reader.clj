@@ -1,7 +1,8 @@
 (ns enviable.reader
   (:require [clojure.string :as str]
             [enviable.source :as source]
-            [enviable.source.env :refer [env-var]]))
+            [enviable.source.env :refer [env-var]]
+            [enviable.reporter :as reporter]))
 
 (defn get-ns []
   (try
@@ -160,3 +161,12 @@
 (defn document
   [var-map]
   (configure var-map {:env {} :doc? true}))
+
+(defn configure-throw
+  [vars opts]
+  (let [r (configure vars opts)]
+    (if (error? r)
+      (throw (Exception. (if (:doc? opts)
+                           (reporter/document-config (:reporter opts) r)
+                           (reporter/report-config-status (:reporter opts) r))))
+      r)))

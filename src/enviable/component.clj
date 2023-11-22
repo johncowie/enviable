@@ -1,6 +1,5 @@
 (ns enviable.component
-  (:require [enviable.reader :as reader]
-            [enviable.output.markdown :as md]))
+  (:require [enviable.reader :as reader]))
 
 (defprotocol Configurable
   (configuration [this]))
@@ -48,11 +47,9 @@
 
 (defn configure-system
   ([system]
-   (configure-system system (System/getenv)))
+   (configure-system system {:env (System/getenv)}))
   ([system opts]
    (-> system
        collate-config
-       (reader/read-env opts)
-       (reader/lmap (fn [error]
-                      (throw (Exception. (str "\nError reading config:\n" (md/result-str error))))))
-       (reader/fmap inject-config system))))
+       (reader/configure-throw opts)
+       (inject-config system))))

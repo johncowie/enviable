@@ -6,7 +6,7 @@
 ;(get-output "example.other-sources")
 
 (deftest example.component
-  (-> "
+  (-> "Error reading config:
  | Name   | Status   | Input | Value | Requested by | Description          |
  | ------ | -------- | ----- | ----- | ------------ | -------------------- |
  | atom:c | Required |       |       | user         | -                    |
