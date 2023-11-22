@@ -1,7 +1,7 @@
-(ns enviable.cli
+(ns enviable.output.markdown
   (:require [enviable.reader :as core]
-            [enviable.cli.table :as table]
-            [enviable.cli.ansi :as ascii]))
+            [enviable.util.markdown-table :as table]
+            [enviable.util.ansi :as ascii]))
 
 
 (defn determine-status [{:keys       [error?]

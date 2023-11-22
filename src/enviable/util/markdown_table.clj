@@ -1,4 +1,4 @@
-(ns enviable.cli.table
+(ns enviable.util.markdown-table
   (:require [clojure.string :as str]))
 
 (defn cell
@@ -80,3 +80,8 @@
 
 ;; TODO escape pipes in strings (\|)
 ;; TODO Take care of borders automatically?
+
+;; TODO move ansi and table into utils
+;; TODO write test for table
+
+;; Move CLI namespace into outputs

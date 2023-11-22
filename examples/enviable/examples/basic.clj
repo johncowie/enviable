@@ -1,6 +1,6 @@
 (ns enviable.examples.basic
   (:gen-class)
-  (:require [enviable.cli :refer [result-str]]
+  (:require [enviable.output.markdown :refer [result-str]]
             [enviable.core :as env]))
 
 ;; TODO come up with better example

@@ -1,6 +1,6 @@
 (ns enviable.examples.other-sources
   (:require [enviable.core :as env]
-            [enviable.cli :refer [result-str]]
+            [enviable.output.markdown :refer [result-str]]
             [enviable.source :as source]
             [enviable.reader :refer [config-val]]))
 
