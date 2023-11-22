@@ -11,10 +11,9 @@
     [true true false] :status/invalid
     [false false true] :status/default
     [false false false] :status/optional
-    :status/success
-    ))
+    :status/success))
 
-(defn flatten-results [{::core/keys [error ok] :as res}]
+(defn flatten-results [{::core/keys [error ok] :as _res}]
   (concat (map #(assoc % :error? true) error)
           (map #(assoc % :error? false) ok)))
 
@@ -22,7 +21,7 @@
   (table/cell text ascii/bold))
 
 (defn name-cell [{::core/keys [name]}]
-  (table/cell name))
+  (table/cell name ascii/bold))
 
 (def sensitive-value-cell
   (table/cell "********"))
@@ -37,6 +36,10 @@
     sensitive-value-cell
     (table/cell parsed)))
 
+(defn default-value-cell [{::core/keys [default] :as val}]
+  (let [v (::core/default-value default)]
+    (table/cell v ascii/fg-grey)))
+
 (defn description-cell [{::core/keys [description]}]
   (if description
     (table/cell description)
@@ -49,9 +52,14 @@
   (case (determine-status result)
     :status/invalid (table/cell "Invalid" ascii/fg-red)
     :status/missing (table/cell "Required" ascii/fg-yellow)
-    :status/default (table/cell "Default" ascii/fg-grey)
+    :status/default (table/cell "Defaulted" ascii/fg-grey)
     :status/optional (table/cell "Optional" ascii/fg-grey)
     (table/cell "Loaded" ascii/fg-green)))
+
+(defn doc-status-cell [result]
+  (if (some? (::core/default result))
+    (table/cell "Optional" ascii/fg-grey)
+    (table/cell "Required")))
 
 (defn result-str [result]
   (let [results (flatten-results result)
@@ -59,6 +67,19 @@
               ["Status" status-cell]
               ["Input" input-cell]
               ["Value" value-cell]
+              ["Requested by" ns-cell]
+              ["Description" description-cell]]]
+    (->> (for [[header value-cell-fn] cols]
+           (concat [(header-cell header)]
+                   (map value-cell-fn results)))
+         (table/transpose)
+         (table/render-table))))
+
+(defn doc-str [result]
+  (let [results (flatten-results result)
+        cols [["Name" name-cell]
+              ["Status" doc-status-cell]
+              ["Defaulted" default-value-cell]
               ["Requested by" ns-cell]
               ["Description" description-cell]]]
     (->> (for [[header value-cell-fn] cols]

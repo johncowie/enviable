@@ -26,7 +26,7 @@
                                (cond
                                  (satisfies? Configurable v)
                                  (configuration v)
-                                 (reader/env-var? v)
+                                 (reader/config-var? v)
                                  v
                                  (associative? v)
                                  (collate-config v))))))
@@ -39,7 +39,7 @@
                                  (assoc (::component-with-configuration v) :config (get config k))
                                  (satisfies? Configurable v)
                                  (assoc v :config (get config k))
-                                 (reader/env-var? v)
+                                 (reader/config-var? v)
                                  (get config k)
                                  (associative? v)
                                  (inject-config (get config k) v)
