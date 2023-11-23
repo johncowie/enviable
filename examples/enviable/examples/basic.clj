@@ -1,7 +1,7 @@
 (ns enviable.examples.basic
   (:gen-class)
-  (:require [enviable.cli :refer [result-str]]
-            [enviable.core :as env]))
+  (:require [enviable.core :as env]
+            [enviable.cli :as env-cli]))
 
 ;; TODO come up with better example
 (def vars {:person {:name           (env/var "NAME")
@@ -20,9 +20,10 @@
                     }})
 
 (defn -main [& args]
-  (let [r (env/read-env vars)]
-    (if (env/error? r)
-      (println (result-str r))
-      (println "LOADED CONFIG: " r))))
+  (try
+    (let [r (env-cli/configure vars args)]
+      (println "Loaded config: " r))
+    (catch Exception e
+      (println (.getMessage e)))))
 
 

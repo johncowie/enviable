@@ -1,6 +1,6 @@
 (ns enviable.examples.other-sources
-  (:require [enviable.core :as env]
-            [enviable.cli :refer [result-str]]
+  (:require [enviable.cli :as env-cli]
+            [enviable.core :as env]
             [enviable.source :as source]
             [enviable.reader :refer [config-val]]))
 
@@ -18,7 +18,8 @@
              :the-other (config-val (AtomSource. :c))})
 
 (defn -main [& args]
-  (let [r (env/read-env config)]
-    (if (env/error? r)
-      (println (result-str r))
-      (println "LOADED CONFIG: " r))))
+  (try
+    (let [r (env-cli/configure config args)]
+      (println "Loaded config: " r))
+    (catch Exception e
+      (println (.getMessage e)))))

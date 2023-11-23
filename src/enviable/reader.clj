@@ -1,7 +1,8 @@
 (ns enviable.reader
   (:require [clojure.string :as str]
             [enviable.source :as source]
-            [enviable.source.env :refer [env-var]]))
+            [enviable.source.env :refer [env-var]]
+            [enviable.reporter :as reporter]))
 
 (defn get-ns []
   (try
@@ -29,7 +30,7 @@
    ::ns (get-ns)
    ::parser identity})
 
-(defn env-var? [x]
+(defn config-var? [x]
   (-> x ::source source/config-source?))
 
 (defn parse-with [var parser]
@@ -56,7 +57,15 @@
     ::ns          (::ns var)
     ::input       input-val
     ::parsed      parsed-val
-    ::sensitive   (::sensitive var)}))
+    ::sensitive   (::sensitive var)
+    ::default     (::default var)}))
+
+(defn doc-result
+  [var]
+  {::name         (-> var ::source source/label)
+   ::description  (::description var)
+   ::ns           (::ns var)
+   ::default      (::default var)})
 
 (defn error [read-result]
   {::error [read-result]})
@@ -100,6 +109,14 @@
         (ok (read-result var nil v) v))
       (error (read-result var nil)))))
 
+(defn- document-var [var]
+  (error (doc-result var)))
+
+(defn- configure-var [{:keys [doc? env]} var]
+  (if doc?
+    (document-var var)
+    (read-var env var)))
+
 (defn- add-to-result [acc-result [k result]]
   (if (and (success? acc-result) (success? result))
     (-> acc-result
@@ -111,25 +128,45 @@
 (declare -read-env)
 
 (defn- read-env-map
-  [env var-map]
+  [opts var-map]
   (->> var-map
        (map (fn [[k v]]
-              [k (-read-env env v)]))
+              [k (-read-env opts v)]))
        (reduce add-to-result {})))
 
-(defn -read-env [env x]
-  (cond (env-var? x)
-        (read-var env x)
+(defn -read-env [opts x]
+  (cond (config-var? x)
+        (configure-var opts x)
         (map? x)
-        (read-env-map env x)
+        (read-env-map opts x)
         :else
         {::value x}))
+
+(defn configure
+  ([var-map]
+   (configure var-map {:env (System/getenv)
+                       :doc? false}))
+  ([var-map opts]
+   (let [res (-read-env opts var-map)]
+     (if (error? res)
+       res
+       (::value res)))))
 
 (defn read-env
   ([var-map]
    (read-env var-map (System/getenv)))
   ([var-map env]
-   (let [res (-read-env env var-map)]
-     (if (error? res)
-       res
-       (::value res)))))
+   (configure var-map {:env env})))
+
+(defn document
+  [var-map]
+  (configure var-map {:env {} :doc? true}))
+
+(defn configure-throw
+  [vars opts]
+  (let [r (configure vars opts)]
+    (if (error? r)
+      (throw (Exception. (if (:doc? opts)
+                           (reporter/document-config (:reporter opts) r)
+                           (reporter/report-config-status (:reporter opts) r))))
+      r)))

@@ -1,6 +1,5 @@
 (ns enviable.component
-  (:require [enviable.reader :as reader]
-            [enviable.cli :as cli]))
+  (:require [enviable.reader :as reader]))
 
 (defprotocol Configurable
   (configuration [this]))
@@ -26,7 +25,7 @@
                                (cond
                                  (satisfies? Configurable v)
                                  (configuration v)
-                                 (reader/env-var? v)
+                                 (reader/config-var? v)
                                  v
                                  (associative? v)
                                  (collate-config v))))))
@@ -39,7 +38,7 @@
                                  (assoc (::component-with-configuration v) :config (get config k))
                                  (satisfies? Configurable v)
                                  (assoc v :config (get config k))
-                                 (reader/env-var? v)
+                                 (reader/config-var? v)
                                  (get config k)
                                  (associative? v)
                                  (inject-config (get config k) v)
@@ -48,11 +47,9 @@
 
 (defn configure-system
   ([system]
-   (configure-system system (System/getenv)))
+   (configure-system system {:env (System/getenv)}))
   ([system opts]
    (-> system
        collate-config
-       (reader/read-env opts)
-       (reader/lmap (fn [error]
-                      (throw (Exception. (str "\nError reading config:\n" (cli/result-str error))))))
-       (reader/fmap inject-config system))))
+       (reader/configure-throw opts)
+       (inject-config system))))

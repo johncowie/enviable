@@ -36,7 +36,7 @@
                    :a (Component. "A")
                    :b (Component. "B")
                    :c (Component. "C"))
-                 (sut/configure-system environment)
+                 (sut/configure-system {:env environment})
                  component/start-system
                  system-to-map))))
 
@@ -48,7 +48,7 @@
                    :a (Component. "A")
                    :sub (component/system-map :b (Component. "B")
                                               :c (Component. "C")))
-                 (sut/configure-system environment)
+                 (sut/configure-system {:env environment})
                  component/start-system
                  system-to-map
                  ))))
@@ -60,6 +60,6 @@
                    :a (Component. "A")
                    :b (env/var "B")
                    :c {:toggle (env/var "C")})
-                 (sut/configure-system environment)
+                 (sut/configure-system {:env environment})
                  component/start-system
                  system-to-map))))))

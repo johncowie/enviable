@@ -1,5 +1,6 @@
 (ns enviable.examples.component
   (:require [com.stuartsierra.component :as component]
+            [enviable.cli :as cli]
             [enviable.core :as env]
             [enviable.examples.component.db :refer [map->DB]]
             [enviable.examples.component.server :refer [map->Server]]))
@@ -12,10 +13,10 @@
                     (env/with-configuration {:host (env/var "ANOTHER_DB_HOST")}))
     :server (map->Server {})))
 
-(defn -main [& _args]
+(defn -main [& args]
   (try
     (-> system
-        (env/configure-system)
+        (cli/configure-system args)
         (component/start-system))
     (catch Exception e
       (println (.getMessage e)))))

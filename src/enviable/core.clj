@@ -13,6 +13,9 @@
 (def error? reader/error?)
 (def read-env reader/read-env)
 
+(def configure reader/configure)
+(def document reader/document)
+
 (def configure-system component/configure-system)
 (def Configurable component/Configurable)
 (def configuration component/configuration)

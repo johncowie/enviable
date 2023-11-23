@@ -1,4 +1,4 @@
-(ns enviable.cli.ansi)
+(ns enviable.util.ansi)
 
 (defn- escape-code
   ([i] (escape-code 0 i))

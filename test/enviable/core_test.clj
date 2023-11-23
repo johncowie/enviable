@@ -98,7 +98,7 @@
              (sut/read-env vars {"ONE" "bill"
                                  "TWO" "6"}))))))
 
-(deftest read-env:nested-test
+(deftest read-env-nested-test
   (testing "Can specify vars in nested configuration, as well as other values"
     (let [parse-fruit #{"banana" "orange" "apple"}
           parse-veg #{"courgette" "pepper"}
@@ -137,3 +137,18 @@
                    "FRUIT_2" "almond"
                    "VEG_1"   "cashew"}
                   (sut/read-env config)))))))
+
+(deftest document-env-test
+  (testing "Can document all config"
+    (let [INT_VAR (-> (sut/int-var "INT_VAR")
+                      (sut/default-to 1)
+                      (sut/describe "I need an int"))
+          BOOL_VAR (-> (sut/int-var "BOOL_VAR")
+                       (sut/default-to false)
+                       (sut/describe "I need a bool"))
+          config {:a INT_VAR
+                  :b BOOL_VAR}]
+      (is (= {::reader/error [(reader/doc-result INT_VAR)
+                              (reader/doc-result BOOL_VAR)]
+              ::reader/ok []}
+             (sut/document config))))))
